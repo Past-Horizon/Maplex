@@ -1,0 +1,9 @@
+private
+out
+build
+.vs
+.vscode
+/MaplexBuild/
+out.txt
+output.txt
+/Maplex/
