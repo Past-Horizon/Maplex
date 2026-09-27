@@ -21,6 +21,7 @@ struct Trigger
 struct TriggerSelection
 {
     std::size_t DominantTriggerIndex;
+    std::size_t SeedTriggerIndex;
     std::optional<std::string> MappingId;
 };
 

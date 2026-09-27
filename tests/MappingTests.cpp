@@ -56,6 +56,25 @@ TEST(TriggerTests, AdvancesOnARepeatedTrigger)
     EXPECT_EQ(*duplicate->MappingId, "mapping-b");
 }
 
+TEST(TriggerTests, FinalDuplicateWrapsMappingButKeepsLastTriggerSeeds)
+{
+    Maplex::Triggers::TriggerProgression progression({
+        {"a", "hello", "mapping-a"},
+        {"b", "love", "mapping-b"},
+        {"c", "forest", "mapping-c"}});
+
+    progression.ProcessOccurrence("a");
+    progression.ProcessOccurrence("a");
+    progression.ProcessOccurrence("a");
+    const auto wrappedDuplicate = progression.ProcessOccurrence("a");
+
+    ASSERT_TRUE(wrappedDuplicate.has_value());
+    EXPECT_EQ(wrappedDuplicate->DominantTriggerIndex, 0);
+    EXPECT_EQ(wrappedDuplicate->SeedTriggerIndex, 2);
+    ASSERT_TRUE(wrappedDuplicate->MappingId.has_value());
+    EXPECT_EQ(*wrappedDuplicate->MappingId, "mapping-a");
+}
+
 TEST(TriggerTests, FindsTheNextMappingAndWrapsAround)
 {
     Maplex::Triggers::TriggerProgression progression({

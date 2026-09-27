@@ -141,5 +141,9 @@
     { "id": "letter-x", "value": "x", "mapping": "mapping-ember", "mappingSeed": 124061, "subMappingSeed": 935194 },
     { "id": "letter-y", "value": "y", "mapping": "mapping-cobalt", "mappingSeed": 235172, "subMappingSeed": 146205 },
     { "id": "letter-z", "value": "z", "mapping": "mapping-jade", "mappingSeed": 346283, "subMappingSeed": 257316 }
+  ],
+  "transpositions": [
+    { "type": "diagonal", "width": 4, "height": 4 },
+    { "type": "reversedDiagonal", "width": 4, "height": 4 }
   ]
 }

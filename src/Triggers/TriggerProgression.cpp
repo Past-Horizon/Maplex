@@ -98,15 +98,22 @@ std::optional<TriggerSelection> TriggerProgression::ProcessOccurrence(std::strin
 
     if (lastObservedTriggerIndex_ == triggerIndex)
     {
-        dominantTriggerIndex_ = (*dominantTriggerIndex_ + 1) % triggers_.size();
-    }
-    else
-    {
-        dominantTriggerIndex_ = *triggerIndex;
+        const std::size_t previousDominantIndex = *dominantTriggerIndex_;
+        dominantTriggerIndex_ = (previousDominantIndex + 1) % triggers_.size();
+        const std::size_t seedTriggerIndex = previousDominantIndex == triggers_.size() - 1
+            ? previousDominantIndex
+            : *dominantTriggerIndex_;
+        lastObservedTriggerIndex_ = triggerIndex;
+        return TriggerSelection{
+            *dominantTriggerIndex_,
+            seedTriggerIndex,
+            FindMappingId(*dominantTriggerIndex_)};
     }
 
+    dominantTriggerIndex_ = *triggerIndex;
     lastObservedTriggerIndex_ = triggerIndex;
     return TriggerSelection{
+        *dominantTriggerIndex_,
         *dominantTriggerIndex_,
         FindMappingId(*dominantTriggerIndex_)};
 }

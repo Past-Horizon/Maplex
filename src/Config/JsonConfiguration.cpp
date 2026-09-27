@@ -144,6 +144,44 @@ Configuration LoadJsonConfiguration(const std::string& path)
         configuration.OrderedTriggers.push_back(std::move(trigger));
     }
 
+    if (document.contains("transpositions"))
+    {
+        const Json& transpositions = document.at("transpositions");
+        if (!transpositions.is_array())
+        {
+            throw std::invalid_argument("'transpositions' must be an ordered array.");
+        }
+
+        for (const Json& transpositionJson : transpositions)
+        {
+            if (!transpositionJson.is_object())
+            {
+                throw std::invalid_argument("Each transposition must be an object.");
+            }
+
+            const std::string type = transpositionJson.at("type").get<std::string>();
+            TranspositionType transpositionType;
+            if (type == "diagonal")
+            {
+                transpositionType = TranspositionType::Diagonal;
+            }
+            else if (type == "reversedDiagonal")
+            {
+                transpositionType = TranspositionType::ReversedDiagonal;
+            }
+            else
+            {
+                throw std::invalid_argument(
+                    "Transposition type must be 'diagonal' or 'reversedDiagonal'.");
+            }
+
+            configuration.Transpositions.push_back({
+                transpositionType,
+                transpositionJson.at("width").get<std::size_t>(),
+                transpositionJson.at("height").get<std::size_t>()});
+        }
+    }
+
     return configuration;
 }
 }

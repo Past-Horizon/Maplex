@@ -1,5 +1,7 @@
 #include <Maplex/Config/Configuration.h>
 
+#include <limits>
+
 namespace Maplex::Config
 {
 std::vector<std::string> Configuration::Validate() const
@@ -34,6 +36,21 @@ std::vector<std::string> Configuration::Validate() const
         {
             errors.emplace_back("Trigger '" + trigger.Id + "' refers to unknown Mapping '" +
                                 *trigger.MappingId + "'.");
+        }
+    }
+
+    for (const PositionalTransposition& transposition : Transpositions)
+    {
+        if (transposition.Width == 0 || transposition.Height == 0)
+        {
+            errors.emplace_back("Transposition block width and height must be greater than zero.");
+            continue;
+        }
+
+        if (transposition.Width > std::numeric_limits<std::size_t>::max() / transposition.Height ||
+            transposition.Width > std::numeric_limits<std::size_t>::max() - transposition.Height)
+        {
+            errors.emplace_back("Transposition block dimensions are too large.");
         }
     }
 

@@ -117,6 +117,107 @@ std::string InitialMappingId(const Config::Configuration& configuration)
     return *mappingId;
 }
 
+std::vector<std::size_t> CreateDiagonalOrder(
+    std::size_t blockLength,
+    const Config::PositionalTransposition& transposition)
+{
+    std::vector<std::size_t> order;
+    order.reserve(blockLength);
+
+    const std::size_t lastRow = std::min(transposition.Height - 1, (blockLength - 1) / transposition.Width);
+    const std::size_t lastColumn = std::min(
+        transposition.Width - 1,
+        blockLength - 1 - lastRow * transposition.Width);
+    std::size_t lastDiagonal = lastRow + lastColumn;
+    if (lastRow > 0)
+    {
+        lastDiagonal = std::max(lastDiagonal, lastRow + transposition.Width - 2);
+    }
+
+    for (std::size_t diagonal = 0; diagonal <= lastDiagonal; ++diagonal)
+    {
+        const std::size_t firstRow = diagonal >= transposition.Width
+            ? diagonal - transposition.Width + 1
+            : 0;
+        const std::size_t lastRow = std::min(diagonal, transposition.Height - 1);
+
+        if (transposition.Type == Config::TranspositionType::Diagonal)
+        {
+            for (std::size_t row = lastRow + 1; row > firstRow; --row)
+            {
+                const std::size_t sourceRow = row - 1;
+                const std::size_t column = diagonal - sourceRow;
+                const std::size_t sourceIndex = sourceRow * transposition.Width + column;
+                if (sourceIndex < blockLength)
+                {
+                    order.push_back(sourceIndex);
+                }
+            }
+        }
+        else
+        {
+            for (std::size_t row = firstRow; row <= lastRow; ++row)
+            {
+                const std::size_t column = diagonal - row;
+                const std::size_t sourceIndex = row * transposition.Width + column;
+                if (sourceIndex < blockLength)
+                {
+                    order.push_back(sourceIndex);
+                }
+            }
+        }
+    }
+
+    return order;
+}
+
+void ApplyTransposition(
+    std::string& symbols,
+    const Config::PositionalTransposition& transposition,
+    bool encrypt)
+{
+    const std::size_t blockCapacity = transposition.Width * transposition.Height;
+    for (std::size_t blockStart = 0; blockStart < symbols.size();)
+    {
+        const std::size_t blockLength = std::min(blockCapacity, symbols.size() - blockStart);
+        const std::string_view block(symbols.data() + blockStart, blockLength);
+        const std::vector<std::size_t> order = CreateDiagonalOrder(blockLength, transposition);
+        std::string transformed(blockLength, '\0');
+
+        for (std::size_t outputIndex = 0; outputIndex < order.size(); ++outputIndex)
+        {
+            if (encrypt)
+            {
+                transformed[outputIndex] = block[order[outputIndex]];
+            }
+            else
+            {
+                transformed[order[outputIndex]] = block[outputIndex];
+            }
+        }
+
+        symbols.replace(blockStart, blockLength, transformed);
+    blockStart += blockLength;
+    }
+}
+
+void ApplyTranspositions(std::string& symbols, const std::vector<Config::PositionalTransposition>& transpositions, bool encrypt)
+{
+    if (encrypt)
+    {
+        for (const Config::PositionalTransposition& transposition : transpositions)
+        {
+            ApplyTransposition(symbols, transposition, true);
+        }
+        return;
+    }
+
+    for (auto transposition = transpositions.rbegin(); transposition != transpositions.rend(); ++transposition)
+    {
+        ApplyTransposition(symbols, *transposition, false);
+    }
+}
+
 constexpr unsigned char kPassthroughTag = 0x80;
 constexpr std::string_view kMappingSeedPurpose = "mapping-seed";
 constexpr std::string_view kSubMappingSeedPurpose = "sub-mapping-seed";
@@ -208,11 +309,11 @@ void ApplyTriggerSelection(
     std::optional<std::uint64_t>& activeSubMappingSeed,
     std::vector<unsigned char>& pendingPunctuation)
 {
-    const Triggers::Trigger& trigger = configuration.OrderedTriggers[selection.DominantTriggerIndex];
+    const Triggers::Trigger& seedTrigger = configuration.OrderedTriggers[selection.SeedTriggerIndex];
     const std::optional<std::string> mappingId = FindMappingId(
         configuration.OrderedTriggers,
         selection.DominantTriggerIndex,
-        ApplyPunctuationEvents(trigger.MappingSeed, pendingPunctuation, kMappingSeedPurpose));
+        ApplyPunctuationEvents(seedTrigger.MappingSeed, pendingPunctuation, kMappingSeedPurpose));
 
     if (mappingId)
     {
@@ -220,7 +321,7 @@ void ApplyTriggerSelection(
     }
 
     activeSubMappingSeed = ApplyPunctuationEvents(
-        trigger.SubMappingSeed,
+        seedTrigger.SubMappingSeed,
         pendingPunctuation,
         kSubMappingSeedPurpose);
     pendingPunctuation.clear();
@@ -317,11 +418,15 @@ std::string Cipher::Encrypt(std::string_view plaintext) const
         position += trigger.Value.size();
     }
 
+    ApplyTranspositions(ciphertext, configuration_.Transpositions, true);
     return ciphertext;
 }
 
 std::string Cipher::Decrypt(std::string_view ciphertext) const
 {
+    std::string restoredCiphertext(ciphertext);
+    ApplyTranspositions(restoredCiphertext, configuration_.Transpositions, false);
+
     Triggers::TriggerProgression progression(configuration_.OrderedTriggers);
     std::string activeMappingId = InitialMappingId(configuration_);
     std::optional<std::uint64_t> activeSubMappingSeed;
@@ -330,17 +435,17 @@ std::string Cipher::Decrypt(std::string_view ciphertext) const
     plaintext.reserve(ciphertext.size());
     const std::size_t lookaheadLength = LongestTriggerLength(configuration_.OrderedTriggers);
 
-    for (std::size_t position = 0; position < ciphertext.size();)
+    for (std::size_t position = 0; position < restoredCiphertext.size();)
     {
         std::string decodedRemainder;
-        const std::size_t availableLength = ciphertext.size() - position;
+        const std::size_t availableLength = restoredCiphertext.size() - position;
         const std::size_t windowLength = std::min(availableLength, lookaheadLength);
         decodedRemainder.reserve(windowLength);
         for (std::size_t offset = 0; offset < windowLength; ++offset)
         {
             decodedRemainder.push_back(
                 TransformSymbol(
-                    configuration_, activeMappingId, ciphertext[position + offset], activeSubMappingSeed, false));
+                    configuration_, activeMappingId, restoredCiphertext[position + offset], activeSubMappingSeed, false));
         }
 
         const std::optional<std::size_t> triggerIndex =
@@ -348,7 +453,7 @@ std::string Cipher::Decrypt(std::string_view ciphertext) const
         if (!triggerIndex)
         {
             const Mappings::Symbol decodedSymbol = TransformSymbol(
-                configuration_, activeMappingId, ciphertext[position], activeSubMappingSeed, false);
+                configuration_, activeMappingId, restoredCiphertext[position], activeSubMappingSeed, false);
             plaintext.push_back(decodedSymbol);
             RecordPunctuation(std::string_view(&decodedSymbol, 1), pendingPunctuation);
             ++position;
@@ -361,7 +466,7 @@ std::string Cipher::Decrypt(std::string_view ciphertext) const
         {
             plaintext.push_back(
                 TransformSymbol(
-                    configuration_, activeMappingId, ciphertext[position + offset], activeSubMappingSeed, false));
+                    configuration_, activeMappingId, restoredCiphertext[position + offset], activeSubMappingSeed, false));
         }
 
         const std::optional<Triggers::TriggerSelection> selection = progression.ProcessOccurrence(trigger.Id);

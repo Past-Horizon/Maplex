@@ -54,6 +54,24 @@ Maplex::Config::Configuration MakeSeededConfiguration(
     return configuration;
 }
 
+Maplex::Config::Configuration MakeGridConfiguration()
+{
+    Maplex::Config::Configuration configuration;
+    configuration.Alphabet = "abcdefghi";
+
+    Maplex::Mappings::Mapping::SubMappings subMappings;
+    for (std::size_t index = 0; index < configuration.Alphabet.size(); ++index)
+    {
+        subMappings.emplace(
+            configuration.Alphabet[index],
+            Maplex::Mappings::SubMapping{static_cast<char>('1' + index)});
+    }
+
+    configuration.MappingSets.emplace("mapping-a", Maplex::Mappings::Mapping(std::move(subMappings)));
+    configuration.OrderedTriggers = {{"trigger-a", "a", "mapping-a"}};
+    return configuration;
+}
+
 TEST(CipherTests, EncryptsAndDecryptsTextAcrossTriggerMappingChanges)
 {
     const Maplex::Cipher::Cipher cipher(MakeConfiguration());
@@ -90,6 +108,41 @@ TEST(CipherTests, PunctuationChangesSeedsForTheNextTrigger)
     EXPECT_NE(baselineCiphertext.back(), punctuatedCiphertext.back());
     EXPECT_EQ(cipher.Encrypt(withPunctuation), punctuatedCiphertext);
     EXPECT_EQ(cipher.Decrypt(punctuatedCiphertext), withPunctuation);
+}
+
+TEST(CipherTests, DiagonalTranspositionUsesDocumentedOrder)
+{
+    Maplex::Config::Configuration configuration = MakeGridConfiguration();
+    configuration.Transpositions = {{Maplex::Config::TranspositionType::Diagonal, 3, 3}};
+    const Maplex::Cipher::Cipher cipher(std::move(configuration));
+
+    EXPECT_EQ(cipher.Encrypt("bcdefghia"), "253864971");
+    EXPECT_EQ(cipher.Decrypt("253864971"), "bcdefghia");
+}
+
+TEST(CipherTests, ReversedDiagonalTranspositionUsesDocumentedOrder)
+{
+    Maplex::Config::Configuration configuration = MakeGridConfiguration();
+    configuration.Transpositions = {{Maplex::Config::TranspositionType::ReversedDiagonal, 3, 3}};
+    const Maplex::Cipher::Cipher cipher(std::move(configuration));
+
+    EXPECT_EQ(cipher.Encrypt("bcdefghia"), "235468791");
+    EXPECT_EQ(cipher.Decrypt("235468791"), "bcdefghia");
+}
+
+TEST(CipherTests, TranspositionsComposeAndRoundTripShortFinalBlock)
+{
+    Maplex::Config::Configuration configuration = MakeGridConfiguration();
+    configuration.Transpositions = {
+        {Maplex::Config::TranspositionType::Diagonal, 3, 3},
+        {Maplex::Config::TranspositionType::ReversedDiagonal, 3, 3}};
+    const Maplex::Cipher::Cipher cipher(std::move(configuration));
+    const std::string plaintext = "bcdefghiabc";
+
+    const std::string ciphertext = cipher.Encrypt(plaintext);
+
+    EXPECT_NE(ciphertext, plaintext);
+    EXPECT_EQ(cipher.Decrypt(ciphertext), plaintext);
 }
 
 TEST(CipherTests, ChangingTriggerSeedsCanChangeCiphertext)
