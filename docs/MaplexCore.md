@@ -1,10 +1,28 @@
-**## Custom Cipher Concept**
+**## Maplex**
 
 Maplex uses substitution mappings and ordered plaintext triggers to determine which mapping is dominant while processing a message. After substitution, positional transformations can rearrange the resulting ciphertext.
 
 **### Customization Requirement**
 
 Mappings, Sub-mappings, triggers, trigger order, and trigger-to-Mapping assignments are configuration supplied by the person creating a Maplex setup. They must not be hardcoded as a fixed set of built-in values. The cipher logic operates on the supplied configuration. Names and values such as *`a_special`*, *`hello`*, and the example Mappings below are illustrative only; each customer can design their own.
+
+**### Config Generator**
+
+ConfigGenerator creates a fresh randomized Maplex configuration from an alphabet and trigger definitions supplied by the user. The generator uses the operating system's random source when creating the configuration. It randomizes Mapping contents, trigger-to-Mapping assignments, per-trigger Mapping and Sub-mapping seeds, the global symbol-shuffle seed, and optional positional transpositions.
+
+Each plaintext symbol receives exactly three ciphertext symbols in every generated Mapping. Within a Mapping, ciphertext symbols are selected without replacement, so no symbol belongs to two different plaintext letters in that Mapping. Different Mappings may reuse ciphertext symbols because the active Mapping determines how a symbol is decoded. If the supplied ciphertext-symbol pool is too small to provide three unique symbols for every alphabet letter in each Mapping, generation fails.
+
+The mapping count is configurable, with a minimum of one and a default of four. If no trigger definitions are supplied, ConfigGenerator creates one trigger per alphabet symbol, using that symbol as its trigger value. Custom trigger IDs and values can instead be supplied; trigger values are the plaintext strings that activate those triggers.
+
+The generated configuration is the random part of the process. Once generated, Maplex encryption and decryption use its stored mappings, seeds, and transformation settings deterministically. Save the generated configuration and use that same file for both encryption and decryption. Generating another configuration, even with the same trigger definitions, creates a different key configuration and will not decrypt messages made with the first one.
+
+The command-line generator accepts the output path and alphabet. Trigger definitions are optional; omitting them creates one trigger per letter:
+
+```text
+Maplex generate generated-config.json abcdefghijklmnopqrstuvwxyz a_special=hello b_special=love
+```
+
+Generated Mapping IDs use the form *`mapping-1`*, *`mapping-2`*, and so on. These IDs label the generated mappings; their contents and trigger assignments are randomized.
 
 **### Mappings**
 
@@ -90,8 +108,21 @@ If more punctuation appears before that trigger, each punctuation event is inclu
 
 The seed-change operation must be deterministic and applied in the same order during encryption and decryption. Decryption first restores plaintext order by undoing positional transformations, then recognizes punctuation as it recovers the plaintext. If a punctuation character is also configured as a trigger, it still performs its normal trigger behavior; its punctuation event affects the next trigger occurrence after it.
 
-If the affected trigger has no configured seed for one of the two seed types, punctuation does not create a seed for that type. Punctuation-driven seed changes make repeated output less predictable, but do not by themselves make Maplex cryptographically secure.
+If the affected trigger has no configured seed for one of the two seed types, punctuation does not create a seed for that type.
 
+**### Trigger-Driven Ciphertext-Symbol Reshuffling**
+
+Maplex can optionally change the effective ciphertext symbols used by every Mapping after each recognized trigger. This is a global symbol permutation: it changes the ciphertext symbol produced for each Mapping output without changing the plaintext alphabet, trigger values, or trigger order.
+
+The permutation is one-to-one over the configured ciphertext alphabet. Every ciphertext symbol is replaced by exactly one symbol, and no two symbols are replaced by the same symbol. The same permutation is applied to the output of every Mapping, so the relationship between plaintext letters and ciphertext symbols changes across trigger intervals even when the active Mapping does not change.
+
+The reshuffle is enabled by the optional top-level JSON setting *`symbolShuffleSeed`*. If this setting is omitted, global ciphertext-symbol reshuffling is disabled. Maplex maintains a reshuffle state initialized from this seed. After recognizing a trigger, it derives the next state deterministically from the previous state, the trigger selected by trigger progression, and the trigger occurrence count. The next state determines the next global ciphertext-symbol permutation. A repeated trigger therefore uses the resolved diagonal-progression position when deriving the next permutation. Encryption and decryption must use the same derivation and permutation order.
+
+The trigger that causes a reshuffle is processed with the permutation that was active before it. The new permutation takes effect only for the symbols after that trigger. For example, if *`hello`* is configured as *`a_special`*, Maplex encodes *`hello`* with the current permutation, recognizes *`a_special`*, derives the next permutation, and encodes the following text with that permutation.
+
+During decryption, Maplex first restores ciphertext order by undoing positional transformations. It then reverses the currently active symbol permutation before decoding each symbol through the active Mapping. After recovering a trigger, it performs the same trigger progression and state update as encryption, so subsequent symbols are decoded using the corresponding new permutation. The permutation must have a defined inverse, and the trigger itself must always be decoded using the permutation that was active before it.
+
+Because the symbol permutation changes at trigger boundaries, one fixed ciphertext-symbol substitution does not describe the entire message. The transformation remains reproducible because each new permutation depends only on the starting seed and the trigger events already recovered from the message.
 **### Diagonal Block Transposition**
 
 After trigger processing and substitution, Maplex can rearrange ciphertext positions using diagonal block transposition.

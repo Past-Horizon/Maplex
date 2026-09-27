@@ -15,4 +15,9 @@ std::uint64_t DerivePunctuationSeed(
 	std::uint64_t seed,
 	unsigned char punctuation,
 	std::string_view seedPurpose);
+std::uint64_t DeriveTriggerShuffleSeed(
+	std::uint64_t seed,
+	std::string_view triggerId,
+	std::uint64_t progressionIndex,
+	std::uint64_t occurrence);
 }

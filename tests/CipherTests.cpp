@@ -95,6 +95,45 @@ TEST(CipherTests, TriggerSeedsProduceRepeatableRoundTrips)
     EXPECT_EQ(firstCipher.Decrypt(ciphertext), plaintext);
 }
 
+TEST(CipherTests, TriggerDrivenSymbolShuffleIsRepeatableAndReversible)
+{
+    Maplex::Config::Configuration configuration = MakeConfiguration();
+    configuration.SymbolShuffleSeed = 78123;
+    const Maplex::Cipher::Cipher cipher(configuration);
+    const Maplex::Cipher::Cipher repeatedCipher(std::move(configuration));
+    const std::string plaintext = "hello i love you";
+
+    const std::string ciphertext = cipher.Encrypt(plaintext);
+
+    EXPECT_NE(ciphertext, plaintext);
+    EXPECT_EQ(repeatedCipher.Encrypt(plaintext), ciphertext);
+    EXPECT_EQ(cipher.Decrypt(ciphertext), plaintext);
+}
+
+TEST(CipherTests, DifferentSymbolShuffleSeedsChangeCiphertext)
+{
+    Maplex::Config::Configuration firstConfiguration = MakeConfiguration();
+    firstConfiguration.SymbolShuffleSeed = 78123;
+    Maplex::Config::Configuration secondConfiguration = MakeConfiguration();
+    secondConfiguration.SymbolShuffleSeed = 78124;
+    const Maplex::Cipher::Cipher firstCipher(std::move(firstConfiguration));
+    const Maplex::Cipher::Cipher secondCipher(std::move(secondConfiguration));
+    const std::string plaintext = "hello i love you";
+
+    EXPECT_NE(firstCipher.Encrypt(plaintext), secondCipher.Encrypt(plaintext));
+}
+
+TEST(CipherTests, MissingSymbolShuffleSeedPreservesCurrentBehavior)
+{
+    const std::string plaintext = "hello i love you";
+    const Maplex::Cipher::Cipher defaultCipher(MakeConfiguration());
+    Maplex::Config::Configuration configuration = MakeConfiguration();
+    configuration.SymbolShuffleSeed = std::nullopt;
+    const Maplex::Cipher::Cipher explicitlyDisabledCipher(std::move(configuration));
+
+    EXPECT_EQ(explicitlyDisabledCipher.Encrypt(plaintext), defaultCipher.Encrypt(plaintext));
+}
+
 TEST(CipherTests, PunctuationChangesSeedsForTheNextTrigger)
 {
     const Maplex::Cipher::Cipher cipher(MakeSeededConfiguration(100, 200));

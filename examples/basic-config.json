@@ -1,5 +1,6 @@
 {
   "alphabet": "abcdefghijklmnopqrstuvwxyz",
+  "symbolShuffleSeed": 78123,
   "mappings": {
     "mapping-a": {
       "a": ["b"],

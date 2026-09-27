@@ -1,26 +1,31 @@
 import argparse
-import json
 import subprocess
 from pathlib import Path
 
 
-DEFAULT_MESSAGE = (
-    "Have you ever thought about how beautiful life is? All of us in our "
-    "darkest moments sometimes think that life is not worth it; but looking "
-    "back at it, mostly all of us have probably realized how beautiful life "
-    "is. You get to spend time with your friends, familly and even have pets, "
-    "like a dog or a cat! I think at the end that life is beautiful and that "
-    "you should not give up on it."
+ZODIAC_340 = (
+    "i hope you are having lots of fun in trying to catch me "
+    "that wasnt me on the tv show "
+    "which brings up a point about me "
+    "i am not afraid of the gas chamber "
+    "because it will send me to paradice all the sooner "
+    "because i now have enough slaves to work for me "
+    "where others have all the fun of life "
+    "enough to not have the fear of death "
+    "i am not afraid because i know that my new life will be "
+    "an easy one in paradice "
+    "death"
 )
-
 
 def main() -> int:
     project_root = Path(__file__).resolve().parents[1]
-    parser = argparse.ArgumentParser(description="Encrypt a message with Maplex and print lossless ciphertext.")
+    parser = argparse.ArgumentParser(
+        description="Encrypt a message with Maplex and print lossless ciphertext."
+    )
     parser.add_argument(
         "--config",
         type=Path,
-        default=project_root / "examples" / "depthv2-config.json",
+        default=project_root / "examples" / "generated" / "generated-config.json",
         help="Path to the Maplex JSON configuration.",
     )
     parser.add_argument(
@@ -32,8 +37,8 @@ def main() -> int:
     parser.add_argument(
         "message",
         nargs="?",
-        default=DEFAULT_MESSAGE,
-        help="Message to encrypt; defaults to the long sample sentence.",
+        default=ZODIAC_340,
+        help="Message to encrypt; defaults to the Zodiac 340 plaintext.",
     )
     arguments = parser.parse_args()
 
@@ -66,13 +71,13 @@ def main() -> int:
         parser.exit(decryption.returncode, error_text)
 
     matches_input = decryption.stdout == input_bytes
-    escaped_ciphertext = json.dumps(encryption.stdout.decode("latin-1"), ensure_ascii=True)
+    ciphertext_text = encryption.stdout.decode("latin-1").replace("\u00a0", " ")
     print(f"Input: {arguments.message}")
-    print(f"Ciphertext (JSON-escaped): {escaped_ciphertext}")
+    print(f"Ciphertext: {ciphertext_text}")
     print(f"Decrypted output matches input: {'PASS' if matches_input else 'FAIL'}")
     if not matches_input:
-        escaped_recovered = json.dumps(decryption.stdout.decode("latin-1"), ensure_ascii=True)
-        print(f"Decrypted output (JSON-escaped): {escaped_recovered}")
+        recovered_text = decryption.stdout.decode("latin-1").replace("\u00a0", " ")
+        print(f"Decrypted output: {recovered_text}")
         return 1
 
     return 0

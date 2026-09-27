@@ -26,6 +26,8 @@ endif()
 list(PREPEND CMAKE_PREFIX_PATH "${MAPLEX_VCPKG_PREFIX}")
 find_package(nlohmann_json CONFIG REQUIRED)
 
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Winux" "${CMAKE_CURRENT_BINARY_DIR}/Winux")
+
 if (NOT TARGET nlohmann_json::nlohmann_json)
   add_library(MaplexJson INTERFACE)
   target_include_directories(MaplexJson SYSTEM INTERFACE "${nlohmann_json_SOURCE_DIR}/include")
@@ -39,7 +41,10 @@ set(MAPLEX_APP_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp")
 add_library(MaplexCore ${MAPLEX_SOURCES})
 add_library(Maplex::Core ALIAS MaplexCore)
 target_include_directories(MaplexCore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(MaplexCore PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(MaplexCore
+  PUBLIC Winux
+  PRIVATE nlohmann_json::nlohmann_json
+)
 
 add_executable(Maplex "${MAPLEX_APP_SOURCE}")
 target_link_libraries(Maplex PRIVATE Maplex::Core)
@@ -62,6 +67,7 @@ if (BUILD_TESTING)
   add_executable(MaplexTests
     tests/MappingTests.cpp
     tests/CipherTests.cpp
+    tests/ConfigGeneratorTests.cpp
   )
 
   target_link_libraries(MaplexTests

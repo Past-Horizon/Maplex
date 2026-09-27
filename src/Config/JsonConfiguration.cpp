@@ -66,14 +66,17 @@ Mappings::Mapping ParseMapping(const Json& jsonMapping)
     return Mappings::Mapping(std::move(subMappings));
 }
 
-std::optional<std::uint64_t> ParseSeed(const Json& triggerJson, const char* key)
+std::optional<std::uint64_t> ParseSeed(
+    const Json& json,
+    const char* key,
+    std::string_view owner = "Trigger")
 {
-    if (!triggerJson.contains(key) || triggerJson.at(key).is_null())
+    if (!json.contains(key) || json.at(key).is_null())
     {
         return std::nullopt;
     }
 
-    const Json& value = triggerJson.at(key);
+    const Json& value = json.at(key);
     if (value.is_number_unsigned())
     {
         return value.get<std::uint64_t>();
@@ -88,7 +91,7 @@ std::optional<std::uint64_t> ParseSeed(const Json& triggerJson, const char* key)
         }
     }
 
-    throw std::invalid_argument(std::string("Trigger seed '") + key + "' must be a non-negative integer.");
+    throw std::invalid_argument(std::string(owner) + " seed '" + key + "' must be a non-negative integer.");
 }
 }
 
@@ -109,6 +112,7 @@ Configuration LoadJsonConfiguration(const std::string& path)
 
     Configuration configuration;
     configuration.Alphabet = document.at("alphabet").get<std::string>();
+    configuration.SymbolShuffleSeed = ParseSeed(document, "symbolShuffleSeed", "Configuration");
 
     const Json& mappingSets = document.at("mappings");
     if (!mappingSets.is_object())
@@ -183,5 +187,87 @@ Configuration LoadJsonConfiguration(const std::string& path)
     }
 
     return configuration;
+}
+
+void SaveJsonConfiguration(const Configuration& configuration, const std::string& path)
+{
+    const std::vector<std::string> errors = configuration.Validate();
+    if (!errors.empty())
+    {
+        throw std::invalid_argument("Cannot save invalid configuration: " + errors.front());
+    }
+
+    Json document;
+    document["alphabet"] = configuration.Alphabet;
+    if (configuration.SymbolShuffleSeed)
+    {
+        document["symbolShuffleSeed"] = *configuration.SymbolShuffleSeed;
+    }
+
+    Json mappings = Json::object();
+    for (const auto& [mappingId, mapping] : configuration.MappingSets)
+    {
+        Json mappingJson = Json::object();
+        for (const Mappings::Symbol plaintextSymbol : configuration.Alphabet)
+        {
+            const Mappings::SubMapping* subMapping = mapping.FindSubMapping(plaintextSymbol);
+            if (subMapping == nullptr)
+            {
+                continue;
+            }
+
+            Json symbols = Json::array();
+            for (const Mappings::Symbol ciphertextSymbol : *subMapping)
+            {
+                symbols.push_back(std::string(1, ciphertextSymbol));
+            }
+            mappingJson[std::string(1, plaintextSymbol)] = std::move(symbols);
+        }
+        mappings[mappingId] = std::move(mappingJson);
+    }
+    document["mappings"] = std::move(mappings);
+
+    Json triggers = Json::array();
+    for (const Triggers::Trigger& trigger : configuration.OrderedTriggers)
+    {
+        Json triggerJson = {
+            {"id", trigger.Id},
+            {"value", trigger.Value},
+            {"mapping", trigger.MappingId ? Json(*trigger.MappingId) : Json(nullptr)}};
+        if (trigger.MappingSeed)
+        {
+            triggerJson["mappingSeed"] = *trigger.MappingSeed;
+        }
+        if (trigger.SubMappingSeed)
+        {
+            triggerJson["subMappingSeed"] = *trigger.SubMappingSeed;
+        }
+        triggers.push_back(std::move(triggerJson));
+    }
+    document["triggers"] = std::move(triggers);
+
+    Json transpositions = Json::array();
+    for (const PositionalTransposition& transposition : configuration.Transpositions)
+    {
+        transpositions.push_back({
+            {"type", transposition.Type == TranspositionType::Diagonal ? "diagonal" : "reversedDiagonal"},
+            {"width", transposition.Width},
+            {"height", transposition.Height}});
+    }
+    if (!transpositions.empty())
+    {
+        document["transpositions"] = std::move(transpositions);
+    }
+
+    std::ofstream output(path);
+    if (!output)
+    {
+        throw std::runtime_error("Could not open configuration file for writing: " + path);
+    }
+    output << document.dump(2) << '\n';
+    if (!output)
+    {
+        throw std::runtime_error("Could not write configuration file: " + path);
+    }
 }
 }

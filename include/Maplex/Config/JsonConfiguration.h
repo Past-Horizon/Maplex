@@ -7,4 +7,5 @@
 namespace Maplex::Config
 {
 Configuration LoadJsonConfiguration(const std::string& path);
+void SaveJsonConfiguration(const Configuration& configuration, const std::string& path);
 }

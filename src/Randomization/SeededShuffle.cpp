@@ -72,4 +72,31 @@ std::uint64_t DerivePunctuationSeed(
     derivedSeed = (derivedSeed ^ punctuation) * 0x100000001b3ULL;
     return SplitMix64(derivedSeed).Next();
 }
+
+std::uint64_t DeriveTriggerShuffleSeed(
+    std::uint64_t seed,
+    std::string_view triggerId,
+    std::uint64_t progressionIndex,
+    std::uint64_t occurrence)
+{
+    std::uint64_t derivedSeed = seed ^ 0xcbf29ce484222325ULL;
+    for (const unsigned char character : triggerId)
+    {
+        derivedSeed = (derivedSeed ^ character) * 0x100000001b3ULL;
+    }
+
+    for (std::size_t byteIndex = 0; byteIndex < sizeof(progressionIndex); ++byteIndex)
+    {
+        const auto byte = static_cast<unsigned char>(progressionIndex >> (byteIndex * 8));
+        derivedSeed = (derivedSeed ^ byte) * 0x100000001b3ULL;
+    }
+
+    for (std::size_t byteIndex = 0; byteIndex < sizeof(occurrence); ++byteIndex)
+    {
+        const auto byte = static_cast<unsigned char>(occurrence >> (byteIndex * 8));
+        derivedSeed = (derivedSeed ^ byte) * 0x100000001b3ULL;
+    }
+
+    return SplitMix64(derivedSeed).Next();
+}
 }

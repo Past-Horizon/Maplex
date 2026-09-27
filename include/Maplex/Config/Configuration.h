@@ -3,6 +3,8 @@
 #include <Maplex/Mappings/Mapping.h>
 #include <Maplex/Triggers/TriggerProgression.h>
 
+#include <cstdint>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -28,6 +30,7 @@ struct Configuration
     std::unordered_map<std::string, Mappings::Mapping> MappingSets;
     std::vector<Triggers::Trigger> OrderedTriggers;
     std::vector<PositionalTransposition> Transpositions;
+    std::optional<std::uint64_t> SymbolShuffleSeed;
 
     std::vector<std::string> Validate() const;
 };

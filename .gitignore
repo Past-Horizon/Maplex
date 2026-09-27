@@ -8,3 +8,5 @@ out.txt
 output.txt
 /Maplex/
 vcpkg_installed
+.venv
+/.github/copilot-instructions.md
