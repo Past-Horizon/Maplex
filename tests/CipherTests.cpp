@@ -134,6 +134,26 @@ TEST(CipherTests, MissingSymbolShuffleSeedPreservesCurrentBehavior)
     EXPECT_EQ(explicitlyDisabledCipher.Encrypt(plaintext), defaultCipher.Encrypt(plaintext));
 }
 
+TEST(CipherTests, UnmappedSymbolsUseMappingDependentPassthroughBytes)
+{
+    const std::string plaintext = " ";
+    const Maplex::Cipher::Cipher mappingACipher(MakeConfiguration());
+
+    Maplex::Config::Configuration mappingBConfiguration = MakeConfiguration();
+    mappingBConfiguration.OrderedTriggers[0].MappingId = "mapping-b";
+    const Maplex::Cipher::Cipher mappingBCipher(std::move(mappingBConfiguration));
+
+    const std::string mappingACiphertext = mappingACipher.Encrypt(plaintext);
+    const std::string mappingBCiphertext = mappingBCipher.Encrypt(plaintext);
+
+    ASSERT_EQ(mappingACiphertext.size(), 1);
+    ASSERT_EQ(mappingBCiphertext.size(), 1);
+    EXPECT_NE(mappingACiphertext, std::string(1, static_cast<char>(0xA0)));
+    EXPECT_NE(mappingACiphertext, mappingBCiphertext);
+    EXPECT_EQ(mappingACipher.Decrypt(mappingACiphertext), plaintext);
+    EXPECT_EQ(mappingBCipher.Decrypt(mappingBCiphertext), plaintext);
+}
+
 TEST(CipherTests, PunctuationChangesSeedsForTheNextTrigger)
 {
     const Maplex::Cipher::Cipher cipher(MakeSeededConfiguration(100, 200));

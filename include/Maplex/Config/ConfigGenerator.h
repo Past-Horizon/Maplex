@@ -20,7 +20,7 @@ struct ConfigGeneratorOptions
     std::string Alphabet;
     std::vector<TriggerDefinition> Triggers;
     std::size_t MappingCount = 4;
-    std::size_t MaxTranspositions = 2;
+    std::size_t MaxTranspositions = 8;
     std::string CiphertextSymbols =
         "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 };

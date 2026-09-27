@@ -17,6 +17,7 @@ ZODIAC_340 = (
     "death"
 )
 
+
 def main() -> int:
     project_root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(
@@ -26,19 +27,16 @@ def main() -> int:
         "--config",
         type=Path,
         default=project_root / "examples" / "generated" / "generated-config.json",
-        help="Path to the Maplex JSON configuration.",
     )
     parser.add_argument(
         "--executable",
         type=Path,
         default=project_root / "out" / "build-vs18" / "Debug" / "Maplex.exe",
-        help="Path to the built Maplex executable.",
     )
     parser.add_argument(
         "message",
         nargs="?",
         default=ZODIAC_340,
-        help="Message to encrypt; defaults to the Zodiac 340 plaintext.",
     )
     arguments = parser.parse_args()
 

@@ -3,6 +3,7 @@
 #include <Maplex/Randomization/SeededShuffle.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 #include <string_view>
 #include <unordered_set>
@@ -13,6 +14,16 @@ namespace Maplex::Cipher::Transformations
 namespace
 {
 constexpr unsigned char kPassthroughTag = 0x80;
+constexpr Mappings::Symbol kPassthroughSeedMarker = '\0';
+
+unsigned char DerivePassthroughOffset(
+    std::string_view mappingId,
+    std::optional<std::uint64_t> subMappingSeed)
+{
+    const std::uint64_t derived = Randomization::DeriveSubMappingSeed(
+        subMappingSeed.value_or(0), mappingId, kPassthroughSeedMarker);
+    return static_cast<unsigned char>(derived) & 0x7F;
+}
 
 std::vector<std::size_t> CreateDiagonalOrder(
     std::size_t blockLength,
@@ -191,8 +202,11 @@ Mappings::Symbol TransformSymbol(
         const Mappings::SubMapping* subMapping = mapping->second.FindSubMapping(symbol);
         if (subMapping == nullptr || subMapping->empty())
         {
+            const unsigned char offset = DerivePassthroughOffset(mappingId, subMappingSeed);
+            const unsigned char keyedSymbol =
+                (static_cast<unsigned char>(symbol) & 0x7F) ^ offset;
             return static_cast<Mappings::Symbol>(
-                static_cast<unsigned char>(symbol) | kPassthroughTag);
+                keyedSymbol | kPassthroughTag);
         }
 
         if (!subMappingSeed)
@@ -210,7 +224,8 @@ Mappings::Symbol TransformSymbol(
     const auto raw = static_cast<unsigned char>(symbol);
     if (raw & kPassthroughTag)
     {
-        return static_cast<Mappings::Symbol>(raw & static_cast<unsigned char>(~kPassthroughTag));
+        const unsigned char offset = DerivePassthroughOffset(mappingId, subMappingSeed);
+        return static_cast<Mappings::Symbol>((raw & 0x7F) ^ offset);
     }
 
     return mapping->second.FindPlaintextSymbol(symbol).value_or(symbol);

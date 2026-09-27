@@ -34,6 +34,7 @@ TEST(ConfigGeneratorTests, GeneratesThreeUniqueCipherSymbolsForEveryLetterInEach
     EXPECT_TRUE(configuration.Validate().empty());
     ASSERT_TRUE(configuration.SymbolShuffleSeed.has_value());
     EXPECT_EQ(configuration.MappingSets.size(), 4);
+    EXPECT_GE(configuration.Transpositions.size(), 1);
 
     for (const auto& [mappingId, mapping] : configuration.MappingSets)
     {
@@ -117,6 +118,17 @@ TEST(ConfigGeneratorTests, RejectsZeroMappings)
         Maplex::Config::GenerateConfiguration(options, platform->crypto()),
         std::invalid_argument);
 }
+
+    TEST(ConfigGeneratorTests, RejectsZeroTranspositions)
+    {
+        std::unique_ptr<Winux::Contracts::IPlatform> platform = Winux::Platform::create();
+        Maplex::Config::ConfigGeneratorOptions options = MakeOptions();
+        options.MaxTranspositions = 0;
+
+        EXPECT_THROW(
+        Maplex::Config::GenerateConfiguration(options, platform->crypto()),
+        std::invalid_argument);
+    }
 
 TEST(ConfigGeneratorTests, DefaultsToOneTriggerPerAlphabetLetter)
 {

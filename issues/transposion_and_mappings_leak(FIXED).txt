@@ -6,32 +6,32 @@ Scope
 This report analyzes the known plaintext and ciphertext from the challenge
 without reading the generated configuration and without invoking the Maplex
 decryptor. The known plaintext is also present as the default value in
-tools/EncryptChallenge.py, so the pair is public. All conclusions below are
+tools/EncryptChallenge.py, so the pair is public. All conclusions are
 conditional on that pair being a genuine plaintext/ciphertext match under the
 documented Maplex design.
 
-State model used
-----------------
-The cipher code tracks the following state per encryption position:
+State model
+-----------
+The cipher maintains the following state per encryption position:
 
   - dominantTriggerIndex_
   - lastObservedTriggerIndex_
-  - activeMappingId (resolved via forward-search + wraparound)
-  - activeSubMappingSeed (optional; possibly mutated by punctuation events)
+  - activeMappingId (resolved via forward-search with wraparound)
+  - activeSubMappingSeed (optional; may be mutated by punctuation events)
   - symbolShuffleState (optional)
-  - triggerOccurrence counter (only advanced when symbolShuffleState exists)
+  - triggerOccurrence counter (advanced only when symbolShuffleState is set)
   - pendingPunctuation (queued punctuation bytes applied to the next trigger)
 
-The analysis below refers to a "context" as the tuple observed on the
-plaintext side that determines the effective substitution at a position:
-(previous dominant trigger, seed-trigger index selected by progression,
-current plaintext letter). This is a derivation from the trigger model, not
+Throughout this report, "context" refers to the tuple on the plaintext side
+that determines the effective substitution at a position: the previous
+dominant trigger, the seed-trigger index selected by progression, and the
+current plaintext letter. This is a derivation from the trigger model, not
 the cipher's literal internal state. Punctuation events can change the
 effective seed at a trigger without changing the derived context, so contexts
-that look identical under this model may in reality have used different
+that appear identical under this model may in reality have used different
 seeds. Conversely, distinct derived contexts may collapse to the same
-effective substitution. The context count below is therefore a model estimate,
-not a measured state-space cardinality.
+effective substitution. The context count reported below is therefore a model
+estimate, not a measured state-space cardinality.
 
 Findings
 --------
@@ -41,52 +41,50 @@ Findings
 The known plaintext and ciphertext are both 412 characters long and contain
 89 spaces. Undoing reversed-diagonal blocks of width 3 and height 4 restores
 all 412 space positions exactly. This identifies the effective positional
-ordering for this sample and shows that preserved/passthrough whitespace acts
-as a strong known-plaintext alignment signal. The exact configured list of
-transpositions is not uniquely established; identity-equivalent extra
-transpositions and additional same-effect compositions are possible.
+ordering for this sample and shows that preserved whitespace acts as a strong
+known-plaintext alignment signal. The exact configured list of transpositions
+is not uniquely established; identity-equivalent extra transpositions and
+additional same-effect compositions are possible.
 
 The transposition is a config-level parameter, not a per-message parameter.
-If the same configuration is used for other messages, the recovered
-transposition should transfer to them. This is the strongest single leak in
-this report because it survives across messages.
+If the same configuration is reused for other messages, the recovered
+transposition transfers to them. This is the strongest single leak in this
+report because it survives across messages.
 
-2. Between trigger firings, the cipher is a fixed homophonic substitution,
-   and known plaintext reads that substitution directly.
+2. Between trigger firings, the cipher reduces to a fixed homophonic
+   substitution, and known plaintext reads that substitution directly.
 
-Looking at Cipher::Encrypt, the cipher is a stream of single-character
-decisions. TransformSymbol is a pure function of (mapping, sub-mapping seed,
-symbol permutation, plaintext symbol). There is no block structure, no
+Cipher::Encrypt processes the message as a stream of single-character
+decisions. TransformSymbol is a pure function of mapping, sub-mapping seed,
+symbol permutation, and plaintext symbol. There is no block structure, no
 chaining, and no diffusion. The active mapping and the active sub-mapping
 seed change only when a trigger fires.
 
 Consequently, between trigger firings the cipher reduces to a fixed
 homophonic substitution over the active mapping. With known plaintext, the
-effective symbol-to-letter mapping in each inter-trigger segment is read off
+effective symbol-to-letter mapping in each inter-trigger segment is read
 directly from the aligned pair. No search, no frequency analysis, and no
 state simulation are required. The recovered substitution is exact for the
-positions it covers, because it was observed, not inferred.
+positions it covers because it was observed, not inferred.
 
 Under the generator's default one-letter trigger model, every letter is a
 trigger, so the effective substitution can change at every character. The
-"segment" is then one character long, and the leak is one observation per
+segment is then one character long, and the leak is one observation per
 position.
 
 3. A known message reveals part of the effective trigger-dependent mapping.
 
 Assuming the generator's default one-letter triggers, the recovered order
 contains 323 non-space symbols. Grouping observations by the derived context
-(previous dominant trigger, seed-trigger index selected by progression,
-current plaintext letter) yields 152 distinct context-to-cipher-symbol
-entries. All 76 repeated derived contexts agree with their earlier observed
-symbol.
+yields 152 distinct context-to-cipher-symbol entries. All 76 repeated derived
+contexts agree with their earlier observed symbol.
 
 This agreement is consistent with a stable effective substitution for those
-derived contexts. It is also consistent with punctuation-event effects
-having been rare enough in this message that they did not split any repeated
+derived contexts. It is also consistent with punctuation-event effects having
+been rare enough in this message that they did not split any repeated
 context. Without the configuration, this analysis cannot distinguish the two
-cases. The 76 repeated contexts should be treated as 76 observations that did
-not contradict the model, not as 76 confirmations that the model is correct.
+cases. The 76 repeated contexts should be treated as observations that did
+not contradict the model, not as confirmations that the model is correct.
 
 The model posits up to 26 x 26 + 1 derived contexts, but the cipher's actual
 state space is larger because it includes pendingPunctuation and the
@@ -95,9 +93,9 @@ bound on the number of distinct effective substitutions observed and an
 upper bound on how completely this single message samples them.
 
 A later message using already observed derived contexts may be partly
-decipherable under this model; unseen contexts remain unresolved. Because
-the seeds are not recovered (finding 4), the decoded portion cannot be
-extended to arbitrary new messages without additional known pairs.
+decipherable under this model; unseen contexts remain unresolved. Because the
+seeds are not recovered (finding 4), the decoded portion cannot be extended
+to arbitrary new messages without additional known pairs.
 
 4. The sample does not demonstrate raw seed recovery.
 
@@ -105,10 +103,10 @@ The mapping seed is reduced to a permutation of the configured Mapping IDs.
 With four mappings, that exposes at most 24 behaviors, not the original
 64-bit seed. The sub-mapping seed drives a shuffle of three ciphertext
 choices, and TransformSymbol uses only shuffleOrder.front(), so it exposes at
-most one of three choices per (mapping, symbol) pair. The implementation in
-SeededShuffle.cpp seeds SplitMix64 with the derived value and consumes a
-small, fixed number of outputs through modulo operations; distinct 64-bit
-seeds that produce the same permutation are observationally equivalent.
+most one of three choices per (mapping, symbol) pair. SeededShuffle.cpp seeds
+SplitMix64 with the derived value and consumes a small, fixed number of
+outputs through modulo operations; distinct 64-bit seeds that produce the
+same permutation are observationally equivalent.
 
 This collapse is the design doing real work. Even with full known plaintext,
 the observed outputs constrain the seeds only through their permutation and
@@ -136,7 +134,7 @@ likely also break the repeated-context agreement used in finding 3.
 
 Security impact and limitations
 -------------------------------
-The demonstrated leak is:
+The demonstrated leak consists of:
 
   - recovery of the effective positional transposition for this sample;
   - recovery of the effective symbol-to-letter substitution in each
@@ -155,14 +153,3 @@ the derived context depends on the trigger history of the specific message.
 It could be extended by accumulating known pairs across multiple messages
 under the same configuration, but the rate of coverage growth is not
 established here.
-
-The result is conditional on the challenge plaintext matching the ciphertext
-and on the default one-letter trigger model used for the context count. It is
-not a proof that Maplex is secure: this was one known pair and one
-configuration behavior. It is also not a proof of a practical break, because
-the seeds were not recovered and cross-message decryption was not
-demonstrated.
-
-Maplex should be treated as obfuscation, not as a replacement for standard
-authenticated encryption. Confidential messages should use a vetted AEAD
-construction with proper key and nonce management.

@@ -1,730 +1,762 @@
 {
-  "alphabet": "abcdefghijklmnopqrstuvwxyz",
+  "alphabet": "abcdefghijklmnopqrstuvwxyz ",
   "mappings": {
     "mapping-1": {
-      "a": [
-        "$",
-        "]",
-        "N"
-      ],
-      "b": [
-        "(",
-        "/",
-        "J"
-      ],
-      "c": [
-        "<",
-        "*",
-        "L"
-      ],
-      "d": [
-        "w",
-        "b",
-        "\""
-      ],
-      "e": [
-        "[",
-        "0",
-        ";"
-      ],
-      "f": [
-        "z",
-        "i",
-        "%"
-      ],
-      "g": [
-        "}",
-        "`",
-        "."
-      ],
-      "h": [
-        "V",
-        "?",
-        "&"
-      ],
-      "i": [
-        "W",
+      " ": [
         ",",
-        "U"
-      ],
-      "j": [
-        "#",
-        "3",
-        "1"
-      ],
-      "k": [
-        "R",
-        "o",
-        "6"
-      ],
-      "l": [
-        ">",
-        "s",
-        ":"
-      ],
-      "m": [
-        "h",
-        "x",
-        "F"
-      ],
-      "n": [
-        "Q",
-        "\\",
-        "H"
-      ],
-      "o": [
-        "4",
-        "v",
-        "7"
-      ],
-      "p": [
-        "m",
-        "t",
-        "K"
-      ],
-      "q": [
-        "e",
-        "g",
-        "f"
-      ],
-      "r": [
-        "p",
-        "d",
-        "{"
-      ],
-      "s": [
-        "T",
-        ")",
-        "@"
-      ],
-      "t": [
-        "P",
-        "O",
-        "y"
-      ],
-      "u": [
-        "r",
-        "!",
-        "l"
-      ],
-      "v": [
-        "2",
-        "'",
-        "C"
-      ],
-      "w": [
-        "=",
-        "5",
-        "u"
-      ],
-      "x": [
-        "I",
-        "c",
+        "X",
         "D"
       ],
-      "y": [
-        "j",
-        "n",
-        "~"
-      ],
-      "z": [
-        "Y",
-        "|",
-        "-"
-      ]
-    },
-    "mapping-2": {
       "a": [
-        "T",
-        "r",
-        "Y"
+        "H",
+        "s",
+        "J"
       ],
       "b": [
-        "v",
-        "2",
-        "m"
+        ">",
+        "+",
+        "Z"
       ],
       "c": [
-        "S",
-        "a",
-        "e"
+        "A",
+        "w",
+        "~"
       ],
       "d": [
-        "L",
-        "X",
-        "&"
+        ";",
+        "a",
+        "z"
       ],
       "e": [
-        "\"",
-        ".",
-        "]"
+        "4",
+        "1",
+        "C"
       ],
       "f": [
-        "g",
-        "z",
-        "3"
+        "t",
+        "=",
+        "#"
       ],
       "g": [
-        "9",
-        "i",
+        "Y",
+        "\"",
         "d"
       ],
       "h": [
-        "n",
-        "}",
-        "l"
+        "Q",
+        "L",
+        "-"
       ],
       "i": [
-        "y",
-        "G",
-        "\\"
+        "u",
+        "\\",
+        "V"
       ],
       "j": [
-        ";",
-        "[",
-        "c"
+        "6",
+        "b",
+        "E"
       ],
       "k": [
-        "{",
-        "?",
-        "`"
+        "B",
+        "o",
+        "3"
       ],
       "l": [
-        "_",
         "p",
-        "B"
+        "g",
+        "O"
       ],
       "m": [
-        "A",
-        "k",
-        "$"
+        "h",
+        "/",
+        "["
       ],
       "n": [
-        ",",
-        "1",
-        "7"
+        "P",
+        ")",
+        "("
       ],
       "o": [
-        "'",
-        "R",
-        "%"
+        "M",
+        ".",
+        "@"
       ],
       "p": [
+        "'",
+        "R",
+        "m"
+      ],
+      "q": [
+        "f",
+        "7",
+        "T"
+      ],
+      "r": [
+        "c",
+        "5",
+        "}"
+      ],
+      "s": [
         "N",
+        "j",
+        "^"
+      ],
+      "t": [
+        "r",
+        "$",
+        ":"
+      ],
+      "u": [
+        "k",
+        "`",
+        "G"
+      ],
+      "v": [
+        "U",
+        "K",
+        "S"
+      ],
+      "w": [
+        "?",
+        "q",
+        "W"
+      ],
+      "x": [
+        "n",
+        "y",
+        "2"
+      ],
+      "y": [
+        "0",
+        "]",
+        "*"
+      ],
+      "z": [
+        "&",
+        "|",
+        "I"
+      ]
+    },
+    "mapping-2": {
+      " ": [
+        "!",
+        "w",
+        "r"
+      ],
+      "a": [
+        "k",
+        "F",
+        "&"
+      ],
+      "b": [
+        "'",
+        "t",
+        "R"
+      ],
+      "c": [
+        "e",
+        "1",
+        "X"
+      ],
+      "d": [
+        "?",
+        "K",
+        "G"
+      ],
+      "e": [
+        "[",
+        "<",
+        "]"
+      ],
+      "f": [
+        "I",
         "q",
         "Q"
       ],
-      "q": [
-        "I",
+      "g": [
+        "p",
+        "c",
+        "N"
+      ],
+      "h": [
+        "x",
+        "i",
+        "9"
+      ],
+      "i": [
+        "(",
+        "o",
+        "u"
+      ],
+      "j": [
+        "l",
+        "z",
+        "S"
+      ],
+      "k": [
+        "|",
+        "y",
+        "\\"
+      ],
+      "l": [
+        "m",
+        "+",
+        "n"
+      ],
+      "m": [
+        "\"",
+        "0",
+        ":"
+      ],
+      "n": [
         "E",
+        "U",
+        "h"
+      ],
+      "o": [
+        "H",
+        "^",
+        "a"
+      ],
+      "p": [
+        "A",
+        "3",
+        "v"
+      ],
+      "q": [
+        "-",
+        "g",
         "Z"
       ],
       "r": [
-        "w",
-        "H",
-        ":"
+        ">",
+        "f",
+        "b"
       ],
       "s": [
-        ")",
-        "J",
-        "K"
+        "@",
+        "W",
+        "7"
       ],
       "t": [
-        "M",
-        "x",
-        "#"
+        "5",
+        ".",
+        "C"
       ],
       "u": [
-        "t",
-        "C",
-        "D"
+        "/",
+        "=",
+        "s"
       ],
       "v": [
-        "4",
-        "O",
-        "U"
+        "V",
+        "$",
+        "d"
       ],
       "w": [
-        "5",
-        "6",
-        "@"
+        "L",
+        "2",
+        ","
       ],
       "x": [
-        "+",
-        ">",
-        "="
+        "4",
+        "Y",
+        "O"
       ],
       "y": [
-        "F",
-        "V",
-        "8"
+        "P",
+        "D",
+        "}"
       ],
       "z": [
-        "/",
-        "*",
-        "|"
+        "~",
+        "%",
+        "M"
       ]
     },
     "mapping-3": {
+      " ": [
+        "f",
+        "'",
+        "3"
+      ],
       "a": [
-        "0",
-        "R",
-        "N"
+        "J",
+        "4",
+        "`"
       ],
       "b": [
-        "J",
-        "G",
-        "5"
+        "@",
+        "]",
+        "i"
       ],
       "c": [
-        "d",
-        "-",
-        ")"
+        "c",
+        "t",
+        "O"
       ],
       "d": [
-        "}",
-        "M",
-        "8"
+        "N",
+        "/",
+        "*"
       ],
       "e": [
-        ">",
-        "m",
-        "r"
+        "^",
+        "~",
+        "2"
       ],
       "f": [
-        "(",
-        "'",
-        "z"
+        "Q",
+        "D",
+        "V"
       ],
       "g": [
-        "]",
-        "7",
+        "=",
+        "9",
         "F"
       ],
       "h": [
-        ":",
-        "!",
-        "k"
+        "M",
+        "-",
+        "E"
       ],
       "i": [
-        "v",
-        "`",
-        "T"
+        "_",
+        "A",
+        "z"
       ],
       "j": [
-        "\\",
-        "f",
-        "a"
+        "Y",
+        "j",
+        "Z"
       ],
       "k": [
-        "x",
-        "C",
-        "X"
+        "8",
+        "6",
+        "#"
       ],
       "l": [
-        "l",
-        ",",
-        "2"
+        "p",
+        "w",
+        "C"
       ],
       "m": [
-        "H",
-        "V",
-        "A"
+        "0",
+        "l",
+        "&"
       ],
       "n": [
-        "I",
-        "W",
-        "@"
+        "k",
+        "b",
+        "5"
       ],
       "o": [
-        "w",
-        "o",
-        "|"
+        "a",
+        "H",
+        "\""
       ],
       "p": [
         "h",
-        "n",
-        "i"
+        "B",
+        "o"
       ],
       "q": [
-        "u",
-        "1",
-        "g"
+        "!",
+        "+",
+        "|"
       ],
       "r": [
-        "j",
-        "B",
+        "m",
+        "%",
         "$"
       ],
       "s": [
-        "K",
-        "6",
-        "q"
-      ],
-      "t": [
-        "O",
-        "y",
-        "t"
-      ],
-      "u": [
         "S",
-        "<",
+        ";",
         "e"
       ],
+      "t": [
+        "I",
+        "r",
+        "s"
+      ],
+      "u": [
+        "y",
+        "}",
+        ","
+      ],
       "v": [
-        "%",
-        "U",
-        "~"
+        ".",
+        "<",
+        "1"
       ],
       "w": [
-        "{",
-        "4",
-        "/"
+        "x",
+        "P",
+        ">"
       ],
       "x": [
-        "#",
-        "[",
-        "\""
+        "K",
+        "L",
+        "("
       ],
       "y": [
-        "c",
-        "+",
-        "&"
+        "\\",
+        "u",
+        "d"
       ],
       "z": [
-        "s",
-        ";",
-        "^"
+        ")",
+        "v",
+        "["
       ]
     },
     "mapping-4": {
+      " ": [
+        "p",
+        "Y",
+        "X"
+      ],
       "a": [
-        "Z",
-        "\\",
-        "."
+        "z",
+        "[",
+        "4"
       ],
       "b": [
-        "2",
-        "K",
-        "<"
+        "i",
+        "P",
+        "w"
       ],
       "c": [
-        "D",
-        "9",
-        "\""
+        "\\",
+        "6",
+        "9"
       ],
       "d": [
-        "C",
-        ":",
-        "Y"
+        "N",
+        "y",
+        "a"
       ],
       "e": [
-        "H",
-        "N",
-        "^"
+        "C",
+        "E",
+        "3"
       ],
       "f": [
-        "W",
-        "n",
-        "/"
+        "}",
+        "U",
+        "t"
       ],
       "g": [
-        "Q",
-        "-",
-        "5"
+        "O",
+        "B",
+        "]"
       ],
       "h": [
-        "R",
-        "8",
-        "@"
+        "M",
+        "Q",
+        "`"
       ],
       "i": [
-        ")",
-        "~",
-        "{"
+        "R",
+        "5",
+        "G"
       ],
       "j": [
-        "|",
-        "z",
-        "L"
+        "+",
+        "%",
+        "e"
       ],
       "k": [
-        "h",
-        "B",
-        "c"
+        "D",
+        "1",
+        "x"
       ],
       "l": [
-        "S",
-        "F",
-        "V"
+        "h",
+        "|",
+        "n"
       ],
       "m": [
-        "!",
-        "d",
-        "u"
+        "b",
+        "{",
+        "-"
       ],
       "n": [
-        "A",
-        "y",
-        "g"
+        "u",
+        "=",
+        "K"
       ],
       "o": [
-        "?",
-        "G",
-        "b"
+        "~",
+        "q",
+        "("
       ],
       "p": [
-        "t",
-        ",",
-        "M"
+        "g",
+        "*",
+        "A"
       ],
       "q": [
-        "U",
-        "k",
-        "v"
+        "o",
+        "v",
+        "@"
       ],
       "r": [
-        "[",
-        "J",
-        "7"
+        "$",
+        "I",
+        ":"
       ],
       "s": [
-        "3",
-        "r",
-        "q"
+        "#",
+        "s",
+        "m"
       ],
       "t": [
-        "s",
-        "P",
-        "*"
+        "7",
+        "&",
+        "W"
       ],
       "u": [
-        "'",
-        "i",
-        "_"
+        "^",
+        "f",
+        "2"
       ],
       "v": [
-        "O",
-        "=",
-        "`"
+        "j",
+        "F",
+        "?"
       ],
       "w": [
         ">",
-        "a",
-        "#"
+        "_",
+        "c"
       ],
       "x": [
-        "(",
-        "6",
-        "&"
+        ")",
+        ".",
+        "/"
       ],
       "y": [
-        "j",
-        "f",
-        "p"
+        "\"",
+        "!",
+        "k"
       ],
       "z": [
-        "m",
-        "+",
-        "x"
+        "r",
+        ";",
+        "S"
       ]
     }
   },
-  "symbolShuffleSeed": 15915056762238426509,
+  "symbolShuffleSeed": 10430127140796157637,
   "transpositions": [
     {
-      "height": 4,
+      "height": 2,
       "type": "reversedDiagonal",
-      "width": 2
+      "width": 4
     },
     {
       "height": 4,
       "type": "reversedDiagonal",
-      "width": 3
+      "width": 5
+    },
+    {
+      "height": 2,
+      "type": "diagonal",
+      "width": 4
     }
   ],
   "triggers": [
     {
       "id": "trigger-a",
-      "mapping": "mapping-1",
-      "mappingSeed": 13658566618324991966,
-      "subMappingSeed": 11318347355197166094,
+      "mapping": "mapping-4",
+      "mappingSeed": 1003617453355760049,
+      "subMappingSeed": 1782036519455917067,
       "value": "a"
     },
     {
       "id": "trigger-b",
-      "mapping": "mapping-1",
-      "mappingSeed": 8684430120154795776,
-      "subMappingSeed": 11905219977289793439,
+      "mapping": "mapping-4",
+      "mappingSeed": 11636025113916136125,
+      "subMappingSeed": 12104969385912052188,
       "value": "b"
     },
     {
       "id": "trigger-c",
       "mapping": "mapping-4",
-      "mappingSeed": 5759587158494138894,
-      "subMappingSeed": 8589681593854511176,
+      "mappingSeed": 3906730111156564246,
+      "subMappingSeed": 3013155230163534116,
       "value": "c"
     },
     {
       "id": "trigger-d",
       "mapping": "mapping-3",
-      "mappingSeed": 6791087956726463979,
-      "subMappingSeed": 15492918017367702983,
+      "mappingSeed": 6362233702852599587,
+      "subMappingSeed": 2700713120146903162,
       "value": "d"
     },
     {
       "id": "trigger-e",
-      "mapping": "mapping-2",
-      "mappingSeed": 5113888017196188046,
-      "subMappingSeed": 948466035385241115,
+      "mapping": "mapping-4",
+      "mappingSeed": 18151174381586349325,
+      "subMappingSeed": 4931012959478485586,
       "value": "e"
     },
     {
       "id": "trigger-f",
-      "mapping": "mapping-1",
-      "mappingSeed": 6246239071588385580,
-      "subMappingSeed": 15629749468726115708,
+      "mapping": "mapping-4",
+      "mappingSeed": 5928914446115061227,
+      "subMappingSeed": 12327405261178019440,
       "value": "f"
     },
     {
       "id": "trigger-g",
-      "mapping": "mapping-4",
-      "mappingSeed": 7234721763931990414,
-      "subMappingSeed": 5519624863691601644,
+      "mapping": "mapping-3",
+      "mappingSeed": 4609455587791496379,
+      "subMappingSeed": 11694508747690800140,
       "value": "g"
     },
     {
       "id": "trigger-h",
-      "mapping": "mapping-4",
-      "mappingSeed": 10092878924673900986,
-      "subMappingSeed": 9796865846858814960,
+      "mapping": "mapping-2",
+      "mappingSeed": 16895589150999777974,
+      "subMappingSeed": 4645489121908743322,
       "value": "h"
     },
     {
       "id": "trigger-i",
-      "mapping": "mapping-2",
-      "mappingSeed": 2272201441549691089,
-      "subMappingSeed": 1963455620019160508,
+      "mapping": "mapping-1",
+      "mappingSeed": 8605207126259646790,
+      "subMappingSeed": 15097916077551985983,
       "value": "i"
     },
     {
       "id": "trigger-j",
-      "mapping": "mapping-1",
-      "mappingSeed": 13200404391866631948,
-      "subMappingSeed": 7420291761190187054,
+      "mapping": "mapping-2",
+      "mappingSeed": 15987058196075395324,
+      "subMappingSeed": 2922162491879200751,
       "value": "j"
     },
     {
       "id": "trigger-k",
-      "mapping": "mapping-1",
-      "mappingSeed": 3352351370758731011,
-      "subMappingSeed": 12653188114308106336,
+      "mapping": "mapping-2",
+      "mappingSeed": 2404318443328237546,
+      "subMappingSeed": 4837761727146340371,
       "value": "k"
     },
     {
       "id": "trigger-l",
-      "mapping": "mapping-4",
-      "mappingSeed": 7226300895673844441,
-      "subMappingSeed": 6169588752486771484,
+      "mapping": "mapping-3",
+      "mappingSeed": 7393770901921037879,
+      "subMappingSeed": 14246333930267420557,
       "value": "l"
     },
     {
       "id": "trigger-m",
-      "mapping": "mapping-2",
-      "mappingSeed": 10945782305499898754,
-      "subMappingSeed": 16317827926392656149,
+      "mapping": "mapping-1",
+      "mappingSeed": 2678135478229162294,
+      "subMappingSeed": 5542953319213887629,
       "value": "m"
     },
     {
       "id": "trigger-n",
-      "mapping": "mapping-1",
-      "mappingSeed": 321083640005960770,
-      "subMappingSeed": 5345573297023811274,
+      "mapping": "mapping-2",
+      "mappingSeed": 4612579425968037217,
+      "subMappingSeed": 2718189051237659037,
       "value": "n"
     },
     {
       "id": "trigger-o",
-      "mapping": "mapping-1",
-      "mappingSeed": 15350214580182457038,
-      "subMappingSeed": 12955081333736422631,
+      "mapping": "mapping-2",
+      "mappingSeed": 7406599308877945814,
+      "subMappingSeed": 16210635398604183447,
       "value": "o"
     },
     {
       "id": "trigger-p",
       "mapping": "mapping-2",
-      "mappingSeed": 5859871804461385410,
-      "subMappingSeed": 12712503819594143277,
+      "mappingSeed": 7924451389125088225,
+      "subMappingSeed": 11845353148894123640,
       "value": "p"
     },
     {
       "id": "trigger-q",
       "mapping": "mapping-1",
-      "mappingSeed": 13141246023304349160,
-      "subMappingSeed": 5648459373676953598,
+      "mappingSeed": 9075353906812331586,
+      "subMappingSeed": 12636821404916514805,
       "value": "q"
     },
     {
       "id": "trigger-r",
-      "mapping": "mapping-1",
-      "mappingSeed": 18204140483533184874,
-      "subMappingSeed": 3729639258408389086,
+      "mapping": "mapping-4",
+      "mappingSeed": 7519083739881386387,
+      "subMappingSeed": 6001141323348808998,
       "value": "r"
     },
     {
       "id": "trigger-s",
-      "mapping": "mapping-2",
-      "mappingSeed": 6044197984066428656,
-      "subMappingSeed": 5559118073893388908,
+      "mapping": "mapping-3",
+      "mappingSeed": 9498057896049606227,
+      "subMappingSeed": 6456421260884379021,
       "value": "s"
     },
     {
       "id": "trigger-t",
-      "mapping": "mapping-3",
-      "mappingSeed": 17359013461592469971,
-      "subMappingSeed": 9373409746289010064,
+      "mapping": "mapping-1",
+      "mappingSeed": 14914353493691432904,
+      "subMappingSeed": 16202491634528387882,
       "value": "t"
     },
     {
       "id": "trigger-u",
-      "mapping": "mapping-2",
-      "mappingSeed": 8704155353460172422,
-      "subMappingSeed": 1665134351020583444,
+      "mapping": "mapping-4",
+      "mappingSeed": 926559306364094196,
+      "subMappingSeed": 16187855982173782636,
       "value": "u"
     },
     {
       "id": "trigger-v",
-      "mapping": "mapping-2",
-      "mappingSeed": 12710301871759089932,
-      "subMappingSeed": 326389282423830103,
+      "mapping": "mapping-4",
+      "mappingSeed": 10105563548266212410,
+      "subMappingSeed": 3474650558306055082,
       "value": "v"
     },
     {
       "id": "trigger-w",
-      "mapping": "mapping-3",
-      "mappingSeed": 4936172844868722861,
-      "subMappingSeed": 13347031490331276144,
+      "mapping": "mapping-4",
+      "mappingSeed": 18106935836774124213,
+      "subMappingSeed": 10471767273130260475,
       "value": "w"
     },
     {
       "id": "trigger-x",
-      "mapping": "mapping-1",
-      "mappingSeed": 2562590980091852145,
-      "subMappingSeed": 13225349841102477077,
+      "mapping": "mapping-2",
+      "mappingSeed": 13764488058520705123,
+      "subMappingSeed": 1888361461731871346,
       "value": "x"
     },
     {
       "id": "trigger-y",
-      "mapping": "mapping-4",
-      "mappingSeed": 3277667071730811520,
-      "subMappingSeed": 4209711188049464612,
+      "mapping": "mapping-3",
+      "mappingSeed": 11831895816808232249,
+      "subMappingSeed": 3672532567391850344,
       "value": "y"
     },
     {
       "id": "trigger-z",
-      "mapping": "mapping-1",
-      "mappingSeed": 3216697381605638122,
-      "subMappingSeed": 6453542839942501364,
+      "mapping": "mapping-4",
+      "mappingSeed": 5000018097370313423,
+      "subMappingSeed": 4815395095995900316,
       "value": "z"
+    },
+    {
+      "id": "trigger- ",
+      "mapping": "mapping-4",
+      "mappingSeed": 11129117837306898487,
+      "subMappingSeed": 4570430061087510696,
+      "value": " "
     }
   ]
 }

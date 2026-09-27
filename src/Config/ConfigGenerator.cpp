@@ -91,6 +91,10 @@ void ValidateOptions(const ConfigGeneratorOptions& options)
     {
         throw std::invalid_argument("The generated configuration must contain at least one Mapping.");
     }
+    if (options.MaxTranspositions == 0)
+    {
+        throw std::invalid_argument("Generated configurations must contain at least one transposition.");
+    }
     if (options.MaxTranspositions > 8)
     {
         throw std::invalid_argument("Maximum generated transpositions cannot exceed eight.");
@@ -221,7 +225,8 @@ Configuration GenerateConfiguration(
             random.UniqueSeed(usedSeeds)});
     }
 
-    const std::size_t transpositionCount = static_cast<std::size_t>(random.Below(options.MaxTranspositions + 1));
+    const std::size_t transpositionCount =
+        1 + static_cast<std::size_t>(random.Below(options.MaxTranspositions));
     configuration.Transpositions.reserve(transpositionCount);
     for (std::size_t index = 0; index < transpositionCount; ++index)
     {

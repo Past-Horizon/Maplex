@@ -8,18 +8,18 @@ Mappings, Sub-mappings, triggers, trigger order, and trigger-to-Mapping assignme
 
 **### Config Generator**
 
-ConfigGenerator creates a fresh randomized Maplex configuration from an alphabet and trigger definitions supplied by the user. The generator uses the operating system's random source when creating the configuration. It randomizes Mapping contents, trigger-to-Mapping assignments, per-trigger Mapping and Sub-mapping seeds, the global symbol-shuffle seed, and optional positional transpositions.
+ConfigGenerator creates a fresh randomized Maplex configuration from an alphabet and trigger definitions supplied by the user. The generator uses the operating system's random source when creating the configuration. It randomizes Mapping contents, trigger-to-Mapping assignments, per-trigger Mapping and Sub-mapping seeds, the global symbol-shuffle seed, and one or more positional transpositions. Generated configurations always enable the global symbol shuffle and at least one transposition. These features add obfuscation but do not provide authenticated encryption.
 
 Each plaintext symbol receives exactly three ciphertext symbols in every generated Mapping. Within a Mapping, ciphertext symbols are selected without replacement, so no symbol belongs to two different plaintext letters in that Mapping. Different Mappings may reuse ciphertext symbols because the active Mapping determines how a symbol is decoded. If the supplied ciphertext-symbol pool is too small to provide three unique symbols for every alphabet letter in each Mapping, generation fails.
 
-The mapping count is configurable, with a minimum of one and a default of four. If no trigger definitions are supplied, ConfigGenerator creates one trigger per alphabet symbol, using that symbol as its trigger value. Custom trigger IDs and values can instead be supplied; trigger values are the plaintext strings that activate those triggers.
+The mapping count is configurable, with a minimum of one and a default of four. The generated transposition count defaults to a random value from one through eight. If no trigger definitions are supplied, ConfigGenerator creates one trigger per alphabet symbol, using that symbol as its trigger value. Custom trigger IDs and values can instead be supplied; trigger values are the plaintext strings that activate those triggers.
 
 The generated configuration is the random part of the process. Once generated, Maplex encryption and decryption use its stored mappings, seeds, and transformation settings deterministically. Save the generated configuration and use that same file for both encryption and decryption. Generating another configuration, even with the same trigger definitions, creates a different key configuration and will not decrypt messages made with the first one.
 
-The command-line generator accepts the output path and alphabet. Trigger definitions are optional; omitting them creates one trigger per letter:
+The command-line generator accepts the output path and alphabet. Include every character that messages may contain; for ordinary lowercase prose, include a space as well. Trigger definitions are optional; omitting them creates one trigger per alphabet symbol:
 
 ```text
-Maplex generate generated-config.json abcdefghijklmnopqrstuvwxyz a_special=hello b_special=love
+Maplex generate generated-config.json "abcdefghijklmnopqrstuvwxyz " a_special=hello b_special=love
 ```
 
 Generated Mapping IDs use the form *`mapping-1`*, *`mapping-2`*, and so on. These IDs label the generated mappings; their contents and trigger assignments are randomized.
