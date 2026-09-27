@@ -1,22 +1,10 @@
 import argparse
+import json
 import subprocess
 from pathlib import Path
 
 
-ZODIAC_340 = (
-    "i hope you are having lots of fun in trying to catch me "
-    "that wasnt me on the tv show "
-    "which brings up a point about me "
-    "i am not afraid of the gas chamber "
-    "because it will send me to paradice all the sooner "
-    "because i now have enough slaves to work for me "
-    "where others have all the fun of life "
-    "enough to not have the fear of death "
-    "i am not afraid because i know that my new life will be "
-    "an easy one in paradice "
-    "death"
-)
-
+KATSU_INTRODUCTION = "Heyoo :D i'm katsu... i like cats, dogs and i like programming and drawing"
 
 def main() -> int:
     project_root = Path(__file__).resolve().parents[1]
@@ -27,16 +15,19 @@ def main() -> int:
         "--config",
         type=Path,
         default=project_root / "examples" / "generated" / "generated-config.json",
+        help="Path to the Maplex JSON configuration.",
     )
     parser.add_argument(
         "--executable",
         type=Path,
         default=project_root / "out" / "build-vs18" / "Debug" / "Maplex.exe",
+        help="Path to the built Maplex executable.",
     )
     parser.add_argument(
         "message",
         nargs="?",
-        default=ZODIAC_340,
+        default=KATSU_INTRODUCTION,
+        help="Message to encrypt; defaults to the Zodiac 340 plaintext.",
     )
     arguments = parser.parse_args()
 
@@ -69,13 +60,13 @@ def main() -> int:
         parser.exit(decryption.returncode, error_text)
 
     matches_input = decryption.stdout == input_bytes
-    ciphertext_text = encryption.stdout.decode("latin-1").replace("\u00a0", " ")
+    escaped_ciphertext = json.dumps(encryption.stdout.decode("latin-1"), ensure_ascii=True)
     print(f"Input: {arguments.message}")
-    print(f"Ciphertext: {ciphertext_text}")
+    print(f"Ciphertext (JSON-escaped): {escaped_ciphertext}")
     print(f"Decrypted output matches input: {'PASS' if matches_input else 'FAIL'}")
     if not matches_input:
-        recovered_text = decryption.stdout.decode("latin-1").replace("\u00a0", " ")
-        print(f"Decrypted output: {recovered_text}")
+        escaped_recovered = json.dumps(decryption.stdout.decode("latin-1"), ensure_ascii=True)
+        print(f"Decrypted output (JSON-escaped): {escaped_recovered}")
         return 1
 
     return 0
