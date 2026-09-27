@@ -32,7 +32,7 @@ public:
             throw std::invalid_argument("Random selection bound must be greater than zero.");
         }
 
-        const std::uint64_t threshold = static_cast<std::uint64_t>(-bound) % bound;
+        const std::uint64_t threshold = (std::uint64_t{0} - bound) % bound;
         for (;;)
         {
             const std::uint64_t value = Next();

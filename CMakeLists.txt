@@ -26,7 +26,12 @@ endif()
 list(PREPEND CMAKE_PREFIX_PATH "${MAPLEX_VCPKG_PREFIX}")
 find_package(nlohmann_json CONFIG REQUIRED)
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Winux" "${CMAKE_CURRENT_BINARY_DIR}/Winux")
+FetchContent_Declare(
+  Winux
+  URL https://github.com/Past-Horizon/Winux/archive/refs/tags/v0.4.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(Winux)
 
 if (NOT TARGET nlohmann_json::nlohmann_json)
   add_library(MaplexJson INTERFACE)
