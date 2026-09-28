@@ -1,10 +1,11 @@
 import argparse
-import json
 import subprocess
 from pathlib import Path
 
 
-KATSU_INTRODUCTION = "Heyoo :D i'm katsu... i like cats, dogs and i like programming and drawing"
+KATSU_INTRODUCTION = "a" * 30
+# z0N47h%KZ7(L83#oHWI<j&No*gG"l= << output from 30 a's
+
 
 def main() -> int:
     project_root = Path(__file__).resolve().parents[1]
@@ -24,10 +25,16 @@ def main() -> int:
         help="Path to the built Maplex executable.",
     )
     parser.add_argument(
+        "--ciphertext-out",
+        type=Path,
+        default=project_root / "ciphertext.bin",
+        help="Path to write the raw ciphertext bytes to.",
+    )
+    parser.add_argument(
         "message",
         nargs="?",
         default=KATSU_INTRODUCTION,
-        help="Message to encrypt; defaults to the Zodiac 340 plaintext.",
+        help="Message to encrypt; defaults to 30 'a' characters.",
     )
     arguments = parser.parse_args()
 
@@ -59,14 +66,16 @@ def main() -> int:
         error_text = decryption.stderr.decode("utf-8", errors="replace")
         parser.exit(decryption.returncode, error_text)
 
+        # generally prefer the console output, but you can use the file too
+    arguments.ciphertext_out.write_bytes(encryption.stdout)
+
     matches_input = decryption.stdout == input_bytes
-    escaped_ciphertext = json.dumps(encryption.stdout.decode("latin-1"), ensure_ascii=True)
     print(f"Input: {arguments.message}")
-    print(f"Ciphertext (JSON-escaped): {escaped_ciphertext}")
+    print(f"Raw ciphertext (latin-1 decoded): {encryption.stdout.decode('latin-1')}")
+    print(f"Raw ciphertext written to: {arguments.ciphertext_out}")
     print(f"Decrypted output matches input: {'PASS' if matches_input else 'FAIL'}")
     if not matches_input:
-        escaped_recovered = json.dumps(decryption.stdout.decode("latin-1"), ensure_ascii=True)
-        print(f"Decrypted output (JSON-escaped): {escaped_recovered}")
+        print(f"Decrypted output: {decryption.stdout.decode('latin-1')}")
         return 1
 
     return 0

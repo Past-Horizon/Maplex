@@ -2,7 +2,7 @@
 #include <Maplex/Randomization/SeededShuffle.h>
 #include <Maplex/Utils/Logger.h>
 
-#include "Transformations.h"
+#include <Maplex/Cipher/Transformations.h>
 
 #include <algorithm>
 #include <cctype>
